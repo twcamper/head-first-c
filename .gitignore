@@ -5,5 +5,5 @@
 *.[oa]
 *~
 src/cards
-src/foo
+src/foo*
 src/southeast
