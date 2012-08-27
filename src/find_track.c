@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-char tracks[][80] = {
+char *tracks[] = {
     "I left my heart at Harvard Med School",
     "Newark, Newark, a wonderful town",
     "Dancing with a Dork",
