@@ -1,17 +1,8 @@
 #include <stdio.h>
+#include "totaller.h"
 
 float total = 0.0;
 short count =  0;
-
-float add_with_tax(float f)
-{
-  short tax_percent = 6;
-  float tax_rate = 1 + tax_percent / 100.0;
-  total += f * tax_rate;
-  count++;
-
-  return total;
-}
 
 int main()
 {
@@ -25,4 +16,14 @@ int main()
   printf("\nFinal total: %.2f\n", total);
   printf("Number of items: %hi\n", count);
   return 0;
+}
+
+float add_with_tax(float f)
+{
+  short tax_percent = 6;
+  float tax_rate = 1 + tax_percent / 100.0;
+  total += f * tax_rate;
+  count++;
+
+  return total;
 }
