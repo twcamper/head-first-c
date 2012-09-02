@@ -42,4 +42,4 @@ clean-obj:
 	@find . -name '*.o' | $(XARGS_RM)
 
 clean-bin:
-	@find . -perm +111 -type f | grep -vE '(\.git|scripts)/' | $(XARGS_RM)
+	@find . -perm +111 -type f | grep -v \.git | $(XARGS_RM)
