@@ -1,6 +1,7 @@
 # tested with GNU make 3.81
 SHELL   = /usr/bin/env sh
 CC      = gcc
+CFLAGS = -std=c99
 LD      = gcc
 
 #### targets and prerequisites ####
@@ -20,13 +21,13 @@ $(EXECUTABLES) : % : %.o
 
 #### compiled object files ####
 $(OBJECTS) : %.o : %.c
-	$(CC) $< -c -o $@ -std=c99
+	$(CC) -c $(CFLAGS) $< -o $@
 
 04/encrypt.o : 04/encrypt.c 04/encrypt.h
-	$(CC) $< -c -o $@ -std=c99
+	$(CC) -c $(CFLAGS) $< -o $@
 
 04/totaller.o : 04/totaller.c 04/totaller.h
-	$(CC) $< -c -o $@ -std=c99
+	$(CC) -c $(CFLAGS) $< -o $@
 
 .PHONY : .gitignore clean clean-obj clean-bin
 .gitignore:
