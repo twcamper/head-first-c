@@ -1,5 +1,8 @@
 #include <stdio.h>
-#include <unistd.h>
+/*#include <unistd.h>*/
+// unistd.h does not declare optarg or optind as external, so we
+// fail under -std=c99
+#include <getopt.h>
 
 int main(int argc, char *argv[])
 {

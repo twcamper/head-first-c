@@ -4,14 +4,14 @@
 # exclude patterns (uncomment them if you want to use them):
 *.[oa]
 *~
-src/cards
-src/foo*
-src/southeast
-src/find_track
-src/foo
-src/monte
-src/order_pizza
-src/totaller
-src/data_type_sizes
-src/mercury_day_length
-src/message_hider
+foo*
+02/southeast
+02/monte
+01/cards
+04/totaller
+04/mercury_day_length
+04/data_type_sizes
+03/order_pizza
+foo
+02.5/find_track
+04/message_hider
