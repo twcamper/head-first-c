@@ -32,12 +32,43 @@ typedef struct book {
   publisher publisher;
 } book;
 
+// we should pass a pointer, instead we are updating a copy
+void bad_update(struct person p)
+{
+  p.age++;
+  printf("bad_update: %i - %p\n", p.age, &p.age);
+}
+
+void update(struct person *p)
+{
+  printf("p %p\n", p);
+  (*p).age++;
+  printf("update: *p.age %i\n", (*p).age);
+  p->age++;
+  printf("update: p->age %i\n", p->age);
+}
 int main()
 {
+  struct person dude = {};
+  dude.age = 21;
+  dude.gender = 'M';
+  struct name d_name = {"Ronnie", "Wayne", "Sykes"};
+  dude.name = d_name;
+  /*dude.name.first = "Ronnie";*/
+  /*dude.name.last  = "Sykes";*/
+
+  update(&dude);
+  // all the same address
+  printf("main(): &dude.age(%p) (&dude.age)(%p)\n",  &dude.age, (&dude.age));
+  printf("BEFORE: %i\n", dude.age);
+  bad_update(dude);
+  printf("AFTER: %i\n", dude.age);
+
+  printf("The dude's name is %s %s, and he's %i years old.\n", dude.name.first, dude.name.last, dude.age);
   publisher Harcourt =
   {
     "Harcourt, Brace, Javonovich, Inc.",
-    {"Tom", "T.", "Madoff"},
+    {{"Tom", "T.", "Madoff"}, 12, 'F'},
     "Malfeasigy, LLC",
     1921,
     48
@@ -52,7 +83,10 @@ int main()
     Harcourt
   };
 
-  printf("Please read %s,\n by %s %s %s, published by %s (a %s company)\n",
-      Schneurmanns.title, Schneurmanns.author.name.first, Schneurmanns.author.name.middle, Schneurmanns.author.name.last, Schneurmanns.publisher.name, Schneurmanns.publisher.corporate_overlord);
+  printf("Please read \"%s,\" by %s %s %s,\n (published by %s a %s company. CEO %s %s %s who is a %i year old %c)\n",
+      Schneurmanns.title, Schneurmanns.author.name.first, Schneurmanns.author.name.middle, Schneurmanns.author.name.last,
+      Schneurmanns.publisher.name, Schneurmanns.publisher.corporate_overlord,
+      Schneurmanns.publisher.CEO.name.first, Schneurmanns.publisher.CEO.name.middle, Schneurmanns.publisher.CEO.name.last,
+      Schneurmanns.publisher.CEO.age, Schneurmanns.publisher.CEO.gender);
   return 0;
 }
