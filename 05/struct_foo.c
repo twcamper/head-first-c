@@ -32,7 +32,7 @@ typedef struct book {
   publisher publisher;
 } book;
 
-// we should pass a pointer, instead we are updating a copy
+ /*we should pass a pointer, instead we are updating a copy*/
 void bad_update(struct person p)
 {
   p.age++;
@@ -58,7 +58,7 @@ int main()
   /*dude.name.last  = "Sykes";*/
 
   update(&dude);
-  // all the same address
+   /*all the same address*/
   printf("main(): &dude.age(%p) (&dude.age)(%p)\n",  &dude.age, (&dude.age));
   printf("BEFORE: %i\n", dude.age);
   bad_update(dude);
@@ -67,11 +67,11 @@ int main()
   printf("The dude's name is %s %s, and he's %i years old.\n", dude.name.first, dude.name.last, dude.age);
   publisher Harcourt =
   {
-    "Harcourt, Brace, Javonovich, Inc.",
-    {{"Tom", "T.", "Madoff"}, 12, 'F'},
-    "Malfeasigy, LLC",
-    1921,
-    48
+    .CEO = {{"Tom", "T.", "Madoff"}, 12, 'M'},
+    .year_founded = 1921,
+    .name = "Harcourt, Brace, Javonovich, Inc.",
+    .corporate_overlord = "Malfeasigy, LLC",
+    .employees = 48
   };
   book Schneurmanns =
   {
