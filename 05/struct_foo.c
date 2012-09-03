@@ -13,13 +13,13 @@ struct person {
 
 typedef struct person author;
 
-struct business {
+typedef struct business {
   char *name;
   struct person CEO;
-  char *corporate_overlord;
+  struct business *parent;
   int year_founded;
   int employees;
-};
+} business;
 
 typedef struct business publisher;
 
@@ -65,12 +65,13 @@ int main()
   printf("AFTER: %i\n", dude.age);
 
   printf("The dude's name is %s %s, and he's %i years old.\n", dude.name.first, dude.name.last, dude.age);
+  business malfeasigy = {"Malfeasigy, LLC", {{"Lucretia", "B", "DeVil"}, 38, 'F'}, NULL, 1381, 201020304};
   publisher Harcourt =
   {
     .CEO = {{"Tom", "T.", "Madoff"}, 12, 'M'},
     .year_founded = 1921,
     .name = "Harcourt, Brace, Javonovich, Inc.",
-    .corporate_overlord = "Malfeasigy, LLC",
+    .parent = &malfeasigy,
     .employees = 48
   };
   book Schneurmanns =
@@ -85,7 +86,7 @@ int main()
 
   printf("Please read \"%s,\" by %s %s %s,\n (published by %s a %s company. CEO %s %s %s who is a %i year old %c)\n",
       Schneurmanns.title, Schneurmanns.author.name.first, Schneurmanns.author.name.middle, Schneurmanns.author.name.last,
-      Schneurmanns.publisher.name, Schneurmanns.publisher.corporate_overlord,
+      Schneurmanns.publisher.name, Schneurmanns.publisher.parent->name,
       Schneurmanns.publisher.CEO.name.first, Schneurmanns.publisher.CEO.name.middle, Schneurmanns.publisher.CEO.name.last,
       Schneurmanns.publisher.CEO.age, Schneurmanns.publisher.CEO.gender);
   return 0;
