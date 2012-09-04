@@ -25,6 +25,21 @@ node* create(char *question)
   return n;
 }
 
+void replace_question(node *n, char *question)
+{
+  /* This free() fixes a memory leak! */
+  free(n->question);
+  /* *
+   * p. 308
+   * "The 'Loretta' data was put on the heap on line 46 (now 61), but the
+   * leak happened when the variable pointing to it ('current->question')
+   * was reassigned without freeing it.
+   * Leaks don't happen when data is created, they happen when 
+   * the program loses all references to the data."
+   * */
+  n->question = strdup(question);
+}
+
 void release(node *n)
 {
   if (n)  {
@@ -64,29 +79,17 @@ int main()
         /* Make the yes-node the new suspect name */
         printf("Who's the suspect? ");
         fgets(suspect, 20, stdin);
-        node *yes_node = create(suspect);
-        current->yes = yes_node;
+        current->yes = create(suspect);
 
         /* Make the no-node a copy of this question */
-        node *no_node = create(question);
-        current->no = no_node;
+        current->no = create(question);
 
         /* Then replace this question with the new question */
         printf("Give me a question that is TRUE for %s but not for %s: ", suspect,
             current->question);
         fgets(question, 80, stdin);
 
-        /* This free() fixes a memory leak! */
-        free(current->question);
-        /* *
-         * p. 308
-         * "The 'Loretta' data was put on the heap on line 46, but the
-         * leak happened when the variable pointing to it ('current->question')
-         * was reassigned without freeing it.
-         * Leaks don't happen when data is created, they happen when 
-         * the program loses all references to the data."
-         * */
-        current->question = strdup(question);
+        replace_question(current, question);
 
         break;
       }
