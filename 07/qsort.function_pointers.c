@@ -93,8 +93,8 @@ int main()
   }
 
   /*STRING LENGTH*/
-  char *strings[] = {"1 way or the other", "1", "2", "a", "b", "What is the ugliest part of your body?", "three", "four", "five", "six", "one"  };
-  const int STRING_COUNT = 11;
+  char *strings[] = {"1 way or the other", "1", "b", "What is the ugliest part of your body?", "three", "four", "2", "a", "five", "six", "one", "a hottentot tot"  };
+  const int STRING_COUNT = 12;
   qsort(strings, STRING_COUNT, sizeof(char*), compare_lengths);
   for (i = 0;i < STRING_COUNT; i++) {
     printf("%s\n", strings[i]);
