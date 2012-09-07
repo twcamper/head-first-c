@@ -50,6 +50,7 @@ clean-obj:
 
 clean-archives:
 	@find . -name '*.a' | $(XARGS_RM)
+	@find . -name '*.so' | $(XARGS_RM)
 
 clean-bin:
 	@find . -perm +111 -type f | grep -v \.git | $(XARGS_RM)
