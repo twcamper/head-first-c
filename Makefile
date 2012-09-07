@@ -6,10 +6,16 @@ LD      = gcc
 
 #### targets and prerequisites ####
 #### CHAPTER 08 HAS ITS OWN MAKEFILE ####
-SRCS        = $(shell find . -name '*.c' | sed 's/08\///g' | tr '\n' ' ')
+TEMP        = $(shell find . -name '*.c' |  tr '\n' ' ')
+SRCS        = $(filter-out ./08%.c, $(TEMP))
 OBJECTS     = $(filter-out %encrypt.o %totaller.o, $(SRCS:.c=.o))
 EXECUTABLES = $(filter-out %message_hider %encrypt, $(SRCS:.c=))
 
+neato:
+	@echo $(SRCS)
+	@echo $(OBJECTS)
+	@echo $(EXECUTABLES)
+	
 #### One target per *.asm source file found above ####
 all: $(EXECUTABLES) 04/message_hider
 
