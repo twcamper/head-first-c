@@ -5,7 +5,8 @@ CFLAGS = -std=c99
 LD      = gcc
 
 #### targets and prerequisites ####
-SRCS        = $(shell find . -name '*.c' | tr '\n' ' ')
+#### CHAPTER 08 HAS ITS OWN MAKEFILE ####
+SRCS        = $(shell find . -name '*.c' | sed 's/08\///g' | tr '\n' ' ')
 OBJECTS     = $(filter-out %encrypt.o %totaller.o, $(SRCS:.c=.o))
 EXECUTABLES = $(filter-out %message_hider %encrypt, $(SRCS:.c=))
 
@@ -33,13 +34,16 @@ $(OBJECTS) : %.o : %.c
 .gitignore:
 	@~/scripts/add-executables-to-gitignore.sh
 
-clean: clean-obj clean-bin
+clean: clean-obj clean-archives clean-bin
 
 # GNU xargs
 XARGS_RM = xargs --no-run-if-empty rm -fv
 
 clean-obj:
 	@find . -name '*.o' | $(XARGS_RM)
+
+clean-archives:
+	@find . -name '*.a' | $(XARGS_RM)
 
 clean-bin:
 	@find . -perm +111 -type f | grep -v \.git | $(XARGS_RM)
