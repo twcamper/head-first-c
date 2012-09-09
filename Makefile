@@ -11,11 +11,6 @@ SRCS        = $(filter-out ./08%.c, $(TEMP))
 OBJECTS     = $(filter-out %encrypt.o %totaller.o, $(SRCS:.c=.o))
 EXECUTABLES = $(filter-out %message_hider %encrypt, $(SRCS:.c=))
 
-neato:
-	@echo $(SRCS)
-	@echo $(OBJECTS)
-	@echo $(EXECUTABLES)
-	
 #### One target per *.asm source file found above ####
 all: $(EXECUTABLES) 04/message_hider
 
