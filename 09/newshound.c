@@ -3,9 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
-
-/*gcc cannot find pid_t for some reason on linux*/
-typedef __pid_t pid_t;
+#include <sys/types.h>
 
 void error(char *msg)
 {
@@ -25,15 +23,15 @@ int main(int argc, char *argv[])
     "http://www.nytimes.com/services/xml/rss/nyt/AsiaPacific.xml"
   };
   int   feed_count = 5;
-
   char *search_phrase = argv[1];
 
+  pid_t pid;
   for (int i = 0; i < feed_count; i++) {
     char var[255];
     sprintf(var, "RSS_FEED=%s", feeds[i]);
     char *vars[] = {var, NULL};
 
-    pid_t pid = fork();
+    pid = fork();
     if (pid == -1)
       error("Can't fork process");
 
