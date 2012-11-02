@@ -54,7 +54,7 @@ int compare_lengths(const void* a, const void* b)
 {
   char **sa = (char **)a;
   char **sb = (char **)b;
-  
+
   int result = length(*sa) - length(*sb);
   if (result == 0)
     /*secondary sort on string val if the lengths are the same*/
