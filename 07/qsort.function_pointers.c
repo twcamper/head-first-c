@@ -80,6 +80,7 @@ int main()
   char *names[] = {"Karen", "Mark", "Brett", "Molly", "Angus"};
   const int NAME_COUNT = 5;
   qsort(names, NAME_COUNT, sizeof(char*), compare_names);
+  puts("\nNames:");
   for (i = 0;i < NAME_COUNT; i++) {
     printf("%s\n", names[i]);
   }
@@ -88,6 +89,7 @@ int main()
   rectangle rectangles[] = {{12,24}, {1,3}, {345,898}, {5,9}, {1080,1650}};
   const int RECTANGLE_COUNT = 5;
   qsort(rectangles, RECTANGLE_COUNT, sizeof(rectangle), compare_areas);
+  puts("\nAreas:");
   for (i = 0;i < RECTANGLE_COUNT; i++) {
     printf("%i x %i\n", rectangles[i].width, rectangles[i].height);
   }
@@ -96,6 +98,7 @@ int main()
   char *strings[] = {"1 way or the other", "1", "b", "What is the ugliest part of your body?", "three", "four", "2", "a", "five", "six", "one", "a hottentot tot"  };
   const int STRING_COUNT = 12;
   qsort(strings, STRING_COUNT, sizeof(char*), compare_lengths);
+  puts("\nLengths:");
   for (i = 0;i < STRING_COUNT; i++) {
     printf("%s\n", strings[i]);
   }
