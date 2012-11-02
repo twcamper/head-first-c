@@ -1,7 +1,7 @@
 # tested with GNU make 3.81
 SHELL   = /usr/bin/env sh
 CC      = gcc
-CFLAGS = -std=c99
+CFLAGS = -std=c99 -g
 LD      = gcc
 
 #### targets and prerequisites ####
