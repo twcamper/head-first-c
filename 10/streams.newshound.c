@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 
 void error(char *msg)
 {
@@ -28,26 +29,36 @@ int main(int argc, char *argv[])
   if (!f)
     error("Can't open stories.txt");
 
-  pid_t pid;
+  /*will save off pids to wait on them in parallel later*/
+  pid_t pids[feed_count];
   int i;
   for (i = 0; i < feed_count; i++) {
     char var[255];
     sprintf(var, "RSS_FEED=%s", feeds[i]);
     char *vars[] = {var, NULL};
 
-    pid = fork();
-    if (pid == -1)
+    pids[i] = fork();
+    if (pids[i] == -1)
       error("Can't fork process");
 
-    if (pid == 0) {
+    if (pids[i] == 0) {
       if (dup2(fileno(f),1) == -1) {
         error("Can't redirect Standard Output");
       }
       if (execle(PYTHON, PYTHON, SCRIPT, search_phrase, NULL, vars) == -1) {
         error("Can't run script");
       }
-    } else
-      printf("forked process %i: %s\n", pid, feeds[i]);
+    }
+  }
+  for (i = 0; i < feed_count; i++) {
+    /*pid has non-zero value if we are in the parent process*/
+    /*i.e., it's the value of the child's pid*/
+    if (pids[i])  {
+      int pid_status;
+      if (waitpid(pids[i], &pid_status, 0) == -1)  {
+        error("Error waiting for child process");
+      }
+    }
   }
   return 0;
 }
