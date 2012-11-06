@@ -33,7 +33,8 @@ int main()
   };
   void (*replies[])(response) = {dump, second_chance, marriage};
 
-  for (int i = 0; i < 4; i++)  {
+  int i;
+  for (i = 0; i < 4; i++)  {
     (replies[r[i].type])(r[i]);
   }
   return 0;

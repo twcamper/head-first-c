@@ -16,7 +16,8 @@ void find(int (*match)(const char *s))
 {
 
   puts("Search Results:\n");
-  for (int i = 0; i < NUM_ADS; i++) {
+  int i;
+  for (i = 0; i < NUM_ADS; i++) {
     if (match(ADS[i])) {
       printf("%s\n", ADS[i]);
     }

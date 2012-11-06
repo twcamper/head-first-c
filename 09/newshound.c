@@ -26,7 +26,8 @@ int main(int argc, char *argv[])
   char *search_phrase = argv[1];
 
   pid_t pid;
-  for (int i = 0; i < feed_count; i++) {
+  int i;
+  for (i = 0; i < feed_count; i++) {
     char var[255];
     sprintf(var, "RSS_FEED=%s", feeds[i]);
     char *vars[] = {var, NULL};

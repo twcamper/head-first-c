@@ -11,7 +11,8 @@ char *tracks[] = {
 
 void find_track(char search_for[])
 {
-  for (int i = 0; i < 5; i++)  {  // c99 allows inline int declaration
+  int i;
+  for (i = 0; i < 5; i++)  {  // c99 allows inline int declaration
     if (strstr(tracks[i], search_for))
       printf("Track %i: '%s'\n", i, tracks[i]);
   }

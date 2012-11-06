@@ -12,7 +12,8 @@ double total(int argc, ...)
   va_list argv;  // macro
   va_start(argv, argc);  // macro
 
-  for (int i = 0; i < argc; i++) {
+  int i;
+  for (i = 0; i < argc; i++) {
     /*macro va_arg() gets next value from arg list 'argv', and has no need of our local counter 'i'*/
     enum drink d = va_arg(argv, enum drink);
     total += price(d);
