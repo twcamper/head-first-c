@@ -58,6 +58,8 @@ int main(int argc, char *argv[])
       if (waitpid(pids[i], &pid_status, 0) == -1)  {
         error("Error waiting for child process");
       }
+      if (pid_status)
+        fprintf(stderr, "Wait status for child process %i: %i", pids[i], pid_status);
     }
   }
   return 0;
