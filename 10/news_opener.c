@@ -12,10 +12,20 @@ void error(char *msg)
   exit(1);
 }
 
-void open_url(char *url)
+void open_urls(int url_count, char *urls[])
 {
-  const char *BROWSER = "www-browser";
+  char *BROWSER = "www-browser";
   int pid_status;
+
+  /*command plus url list as arguments*/
+  char *cmd_line[url_count + 2];
+
+  cmd_line[0] = BROWSER;
+  int i;
+  for (i = 1; i <= url_count; i++) {
+    cmd_line[i] = urls[i - 1];
+  }
+  cmd_line[i] = NULL;
 
   pid_t pid = fork();
 
@@ -23,8 +33,8 @@ void open_url(char *url)
     error("Can't fork process: open_url()");
 
   if (!pid) /* child process */  {
-    if (execlp(BROWSER, BROWSER, url, NULL) == -1) {
-      error(strdup(BROWSER));
+    if (execvp(BROWSER, cmd_line) == -1) {
+      error(BROWSER);
     }
   }
 
@@ -35,6 +45,6 @@ void open_url(char *url)
 int main(int argc, char *argv[])
 {
 
-  open_url(argv[1]);
+  open_urls(argc - 1, argv + 1);
   return 0;
 }
