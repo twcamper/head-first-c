@@ -14,13 +14,13 @@ void error(char *msg)
 
 void open_urls(int url_count, char *urls[])
 {
-  char *BROWSER = "www-browser";
+  char *COMMAND = "www-browser";
   int pid_status;
 
   /*command plus url list as arguments*/
   char *cmd_line[url_count + 2];
 
-  cmd_line[0] = BROWSER;
+  cmd_line[0] = COMMAND;
   int i;
   for (i = 1; i <= url_count; i++) {
     cmd_line[i] = urls[i - 1];
@@ -33,8 +33,8 @@ void open_urls(int url_count, char *urls[])
     error("Can't fork process: open_url()");
 
   if (!pid) /* child process */  {
-    if (execvp(BROWSER, cmd_line) == -1) {
-      error(BROWSER);
+    if (execvp(COMMAND, cmd_line) == -1) {
+      error(COMMAND);
     }
   }
 
