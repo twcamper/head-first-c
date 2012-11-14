@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
 
   while (fgets(line,255,stdin)) {
     if (line[0] == '\t')  {
-      urls[url_count] = &line[1];
+      urls[url_count] = strdup(&line[1]);
       url_count++;
     }
   }
