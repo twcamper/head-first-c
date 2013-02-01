@@ -86,6 +86,14 @@ int main(int argc, char *argv[])
   while (fgets(line,255,stdin)) {
     if (line[0] == '\t')  {
       urls[url_count] = strdup(&line[1]);
+      /*
+      10/news_opener.c:88:7: warning: implicit declaration of function ‘strdup’ [-Wimplicit-function-declaration]
+      10/news_opener.c:88:23: warning: assignment makes pointer from integer without a cast [enabled by default]
+      /usr/include/string.h
+      175:extern char *strdup (__const char *__s)
+
+      see note on -std= in Makefile
+      */
       url_count++;
     }
   }

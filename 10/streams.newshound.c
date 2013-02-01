@@ -43,6 +43,10 @@ int main(int argc, char *argv[])
 
     if (pids[i] == 0) {
       if (dup2(fileno(f),1) == -1) {
+      /*10/streams.newshound.c:45:7: warning: implicit declaration of function ‘fileno’ [-Wimplicit-function-declaration]
+        /usr/include/stdio.h
+        851:extern int fileno (FILE *__stream) __THROW __wur;
+        see note on -std= in Makefile*/
         error("Can't redirect Standard Output");
       }
       if (execle(PYTHON, PYTHON, SCRIPT, search_phrase, NULL, vars) == -1) {

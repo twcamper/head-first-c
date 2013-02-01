@@ -1,6 +1,10 @@
 # tested with GNU make 3.81
 SHELL   = /usr/bin/env sh
 CC      = gcc
+#  gcc on linux defaults to -std=gnu89.  Building as -std=c99, certain std lib headers such as 
+#  'fileno' and 'strdup' are not found because they are hidden behind feature test macros that 
+#  are only true with the GNU extensions (-std=gnu89).
+#CFLAGS  = -g -std=c99
 CFLAGS  = -g
 LD      = gcc
 
