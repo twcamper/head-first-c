@@ -44,7 +44,10 @@ void open_urls(int url_count, char *urls[])
 
 int main(int argc, char *argv[])
 {
-
+  if (argc < 2) {
+    fprintf(stderr, "Usage: %s <search phrase>\n", argv[0]);
+    return 1;
+  }
   const char *PYTHON = "/usr/bin/python";
   const char *SCRIPT = "09/rssgossip.py";
   char *phrase = argv[1];

@@ -15,6 +15,10 @@ void error(char *msg)
 int main(int argc, char *argv[])
 {
   const char *PYTHON = "/usr/bin/python";
+  if (argc < 2) {
+    fprintf(stderr, "Usage: %s <search phrase>\n", argv[0]);
+    return 1;
+  }
   const char *SCRIPT = "09/rssgossip.py";
   char *feeds[] = {
     "http://www.nytimes.com/services/xml/rss/nyt/Africa.xml",

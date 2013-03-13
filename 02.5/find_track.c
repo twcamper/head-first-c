@@ -21,7 +21,6 @@ void find_track(char search_for[])
 int main()
 {
   char search_for[80];
-  int foont;
   printf("Search for: ");
   /*fgets(search_for, 80, stdin); // returns \n so the strstr() search fails*/
   scanf("%79s", search_for);
