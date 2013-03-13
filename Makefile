@@ -1,13 +1,13 @@
 # tested with GNU make 3.81
 SHELL   = /usr/bin/env sh
-#  gcc on linux defaults to -std=gnu89.  Building as -std=c99, certain std lib headers such as 
-#  'fileno' and 'strdup' are not found because they are hidden behind feature test macros that 
-#  are only true with the GNU extensions (-std=gnu89).
-#CFLAGS  = -g -std=c99
 CC      = clang
-CFLAGS  = -g3 -gdwarf-2 -Wall -Wextra -pedantic -std=c99
 LD      = clang
+ifeq ($(shell uname),Linux)
+	LINUX_FEATURES = -D_POSIX_SOURCE# for fileno(), /usr/include/stdio.h
+	LINUX_FEATURES += -D_BSD_SOURCE# for strdup(), /usr/include/string.h
+endif
 
+override CFLAGS += -g3 -gdwarf-2 -Wall -Wextra -pedantic -std=c99 $(LINUX_FEATURES)
 #### targets and prerequisites ####
 #### CHAPTER 08 HAS ITS OWN MAKEFILE ####
 TEMP        = $(shell find . -name '*.c' |  tr '\n' ' ')
