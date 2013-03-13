@@ -1,12 +1,12 @@
 # tested with GNU make 3.81
 SHELL   = /usr/bin/env sh
-CC      = gcc
 #  gcc on linux defaults to -std=gnu89.  Building as -std=c99, certain std lib headers such as 
 #  'fileno' and 'strdup' are not found because they are hidden behind feature test macros that 
 #  are only true with the GNU extensions (-std=gnu89).
 #CFLAGS  = -g -std=c99
-CFLAGS  = -g
-LD      = gcc
+CC      = clang
+CFLAGS  = -g3 -gdwarf-2 -Wall -Wextra -pedantic -std=c99
+LD      = clang
 
 #### targets and prerequisites ####
 #### CHAPTER 08 HAS ITS OWN MAKEFILE ####
@@ -42,7 +42,7 @@ $(OBJECTS) : %.o : %.c
 clean: clean-obj clean-archives clean-bin
 
 # GNU xargs
-XARGS_RM = xargs --no-run-if-empty rm -fv
+XARGS_RM = xargs rm -fv
 
 clean-obj:
 	@find . -name '*.o' | $(XARGS_RM)
@@ -52,4 +52,4 @@ clean-archives:
 	@find . -name '*.so' | $(XARGS_RM)
 
 clean-bin:
-	@find . -perm +111 -type f | grep -v \.git | $(XARGS_RM)
+	@find . -perm +111 -type f | grep -vE '\.git' | $(XARGS_RM)
