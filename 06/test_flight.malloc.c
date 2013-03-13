@@ -1,3 +1,8 @@
+/* enable strdup() declaration in string.h */
+#if defined(__linux__) || defined(__linux) || defined(__gnu_linux__)
+  #define _BSD_SOURCE 1
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

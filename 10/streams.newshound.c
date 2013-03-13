@@ -1,3 +1,8 @@
+/* enable fileno() declaration in stdio.h */
+#if defined(__linux__) || defined(__linux) || defined(__gnu_linux__)
+   #define _POSIX_SOURCE 1
+#endif
+
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>

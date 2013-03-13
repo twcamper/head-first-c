@@ -2,12 +2,8 @@
 SHELL   = /usr/bin/env sh
 CC      = clang
 LD      = clang
-ifeq ($(shell uname),Linux)
-	LINUX_FEATURES = -D_POSIX_SOURCE# for fileno(), /usr/include/stdio.h
-	LINUX_FEATURES += -D_BSD_SOURCE# for strdup(), /usr/include/string.h
-endif
 
-override CFLAGS += -g3 -gdwarf-2 -Wall -Wextra -pedantic -std=c99 $(LINUX_FEATURES)
+override CFLAGS += -g3 -gdwarf-2 -Wall -Wextra -pedantic -std=c99
 #### targets and prerequisites ####
 #### CHAPTER 08 HAS ITS OWN MAKEFILE ####
 TEMP        = $(shell find . -name '*.c' |  tr '\n' ' ')
