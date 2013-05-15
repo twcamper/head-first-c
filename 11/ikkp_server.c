@@ -49,8 +49,7 @@ void bind_to_port(int socket, int port)
   int reuse = 1;
   if (setsockopt(socket, SOL_SOCKET, SO_REUSEADDR, (char *)&reuse, sizeof(int)) == -1)
     error("Can't set the 'reuse' option on the socket");
-  int c = bind (socket, (struct sockaddr *)&name, sizeof(name));
-  if (c == -1)
+  if (bind(socket, (struct sockaddr *)&name, sizeof(name)) == -1)
     error("Can't bind to socket");
 }
 int say(int socket, char *s)
@@ -63,23 +62,19 @@ int say(int socket, char *s)
 
 int read_in(int socket, char *buf, int len)
 {
-  char *s = buf;
   int slen = len;
-  int c = recv(socket, s, slen, 0);
+  int c = 0;
+  buf[0] = '\0';
 
-  while ((c > 0) &&  (s[c-1] != '\n')) {
-    s += c; slen -= c;
-    c = recv(socket, s, slen, 0);
+  while ((c = recv(socket, buf, slen, 0) > 0) && (buf[c-1] != '\n')) {
+    buf += c; slen -= c;
   }
   if (c < 0)
-    /*in case of an error*/
     return c;
-  else if (c == 0)
-    /*Nothing read: send back an emtpy string*/
-    buf[0] = '\0';
-  else
-    /*replace the '\r'*/
-    s[c-1] = '\0';
+
+  /*replace the '\r'*/
+  if (c > 0)
+    buf[c-1] = '\0';
 
   return len - slen;
 }
