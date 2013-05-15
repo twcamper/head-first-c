@@ -17,10 +17,11 @@ int main()
 {
 
   char *advice[] = {
-    "Take smaller bites.\r\n",
-    "One word: inappropriate\r\n",
-    "Just for today, be honest: tell the boss what you *really* think.\r\n",
-    "You might want to rethink that haircut.\r\n"
+    "\nTake smaller bites.\r\n",
+    "\nOne word: inappropriate\r\n",
+    "\nI really couldn't advise you on such a matter!\r\n",
+    "\nJust for today, be honest: tell the boss what you *really* think.\r\n",
+    "\nYou might want to rethink that haircut.\r\n"
   };
 
   int listener_d = socket(PF_INET, SOCK_STREAM, 0);
