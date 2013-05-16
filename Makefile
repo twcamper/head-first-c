@@ -7,7 +7,7 @@ override CFLAGS += -g3 -gdwarf-2 -Wall -Wextra -pedantic -std=c99
 #### targets and prerequisites ####
 #### CHAPTER 08 HAS ITS OWN MAKEFILE ####
 TEMP        = $(shell find . -name '*.c' |  tr '\n' ' ')
-SRCS        = $(filter-out ./08%.c, $(TEMP))
+SRCS        = $(filter-out ./11%.c ./08%.c, $(TEMP))
 OBJECTS     = $(filter-out %encrypt.o %totaller.o, $(SRCS:.c=.o))
 EXECUTABLES = $(filter-out %message_hider %encrypt, $(SRCS:.c=))
 
