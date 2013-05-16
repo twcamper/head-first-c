@@ -16,7 +16,50 @@ void bind_to_port(int socket, int port);
 int say(int socket, char *s);
 void handle_shutdown(int sig);
 
+typedef enum {JOKE_COMPLETE, JOKE_REPROMPT, JOKE_ERROR} JokeStatus;
+JokeStatus tell_joke(int);
+
+#define RESPONSE_MAX 128
 static int listener_d = 0;
+void log_error(char *s, unsigned int line)
+{
+  fprintf(stderr, "IKKP error: %s: %d\n", s, line);
+}
+JokeStatus tell_joke(int client_d)
+{
+  int len;
+  char response[RESPONSE_MAX + 2] = {'\0'};
+  if (say(client_d, "\r\nKnock! Knock!\r\n") == -1) {
+    log_error("say", __LINE__);
+    return JOKE_ERROR;
+  }
+
+  len = read_in(client_d, response, RESPONSE_MAX + 2);
+  if (strncasecmp(response, "Who's there?", len) != 0) {
+    if (say(client_d, "You should say 'Who's there?'\r\n") == -1) {
+      log_error("say", __LINE__);
+      return JOKE_ERROR;
+    }
+    return JOKE_REPROMPT;
+  }
+  if ( say(client_d, "Oscar\r\n") == -1)
+    return JOKE_ERROR;
+
+  len = read_in(client_d, response, RESPONSE_MAX + 2);
+  if (strncasecmp(response, "Oscar Who?", len) != 0) {
+    if (say(client_d, "You should say 'Oscar who?'\r\n") == -1) {
+      log_error("say", __LINE__);
+      return JOKE_ERROR;
+    }
+    return JOKE_REPROMPT;
+  }
+  if (say(client_d, "Oscar silly question, you get a silly answer!\r\n") == -1) {
+    log_error("say", __LINE__);
+    return JOKE_ERROR;
+  }
+
+  return JOKE_COMPLETE;
+}
 
 void handle_shutdown(int sig)
 {
@@ -93,12 +136,10 @@ int read_in(int socket, char *buf, int len)
   return strlen(buf);
 }
 
-#define RESPONSE_MAX 128
 #define PORT         30001
 int main(void)
 {
-  char response[RESPONSE_MAX + 2] = {'\0'};
-  int connect_d = 0, rc = 0, len;
+  int connect_d = 0, rc = 0;
 
   if (catch_signal(SIGINT, handle_shutdown) == -1)
     exit_error("Setting interrupt handler");
@@ -113,27 +154,13 @@ int main(void)
 
   for (;;) {
     connect_d = open_client_socket();
-    rc = say(connect_d, "Internet Knock-Knock Protocal Server\r\nVersion 1.0\r\nKnock! Knock!\r\n");
-    if (rc == -1) {
+    if (say(connect_d, "Internet Knock-Knock Protocal Server\r\nVersion 1.0\r\n") == -1) {
+      log_error("say", __LINE__);
       close(connect_d);
       continue;
     }
-    len = read_in(connect_d, response, RESPONSE_MAX + 2);
-    if (strncasecmp(response, "Who's there?", len) != 0) {
-      close(connect_d);
-      continue;
-    }
-    rc = say(connect_d, "Oscar\r\n");
-    if (rc == -1) {
-      close(connect_d);
-      continue;
-    }
-    len = read_in(connect_d, response, RESPONSE_MAX + 2);
-    if (strncasecmp(response, "Oscar Who?", len) != 0) {
-      close(connect_d);
-      continue;
-    }
-    say(connect_d, "Oscar silly question, you get a silly answer\r\n");
+    while ((rc = tell_joke(connect_d)) == JOKE_REPROMPT)
+      ;
     close(connect_d);
   }
 
