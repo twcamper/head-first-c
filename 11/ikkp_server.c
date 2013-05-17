@@ -12,26 +12,44 @@
 #include "error.h"
 #include "signals.h"
 
+/* Macro Definitions */
+#define RESPONSE_MAX  128
+#define PORT          30001
+#define MAX_WHO       RESPONSE_MAX
+#define MAX_PUNCHLINE 512
+
+/* Global Variables */
+static int listener_d = 0;
+
+/* Type Definitions */
+typedef enum {JOKE_COMPLETE, JOKE_REPROMPT, JOKE_ERROR} JokeStatus;
+typedef struct {
+  char who[MAX_WHO];
+  char punchline[MAX_PUNCHLINE + 2];
+} Joke;
+
+/* Function Prototypes */
 int read_in(int socket, char *buf, int len);
 int open_listener_socket(void);
 int open_client_socket(void);
 void bind_to_port(int socket, int port);
 int say(int socket, char *s);
 void handle_shutdown(int sig);
+JokeStatus tell_joke(int, Joke);
 
-typedef enum {JOKE_COMPLETE, JOKE_REPROMPT, JOKE_ERROR} JokeStatus;
-JokeStatus tell_joke(int);
-
-#define RESPONSE_MAX 128
-static int listener_d = 0;
+/* Function Defintions */
 void log_error(char *s, unsigned int line)
 {
   fprintf(stderr, "IKKP error: %s: %d\n", s, line);
 }
-JokeStatus tell_joke(int client_d)
+JokeStatus tell_joke(int client_d, Joke joke)
 {
   int len;
+  char name[strlen(joke.who) + 2];
   char response[RESPONSE_MAX + 2] = {'\0'};
+  char expected_response[RESPONSE_MAX + 2] = {'\0'};
+  char nudge[strlen(joke.who) + 25];
+
   if (say(client_d, "\r\nKnock! Knock!\r\n") == -1) {
     log_error("say", __LINE__);
     return JOKE_ERROR;
@@ -45,18 +63,25 @@ JokeStatus tell_joke(int client_d)
     }
     return JOKE_REPROMPT;
   }
-  if ( say(client_d, "Oscar\r\n") == -1)
+
+  strcpy(name, joke.who);
+  strcat(name, "\r\n");
+  if (say(client_d, name) == -1)
     return JOKE_ERROR;
 
+  strcpy(expected_response, joke.who);
+  strcat(expected_response, " Who?");
   len = read_in(client_d, response, RESPONSE_MAX + 2);
-  if (strncasecmp(response, "Oscar Who?", len) != 0) {
-    if (say(client_d, "You should say 'Oscar who?'\r\n") == -1) {
+  if (strncasecmp(response, expected_response, len) != 0) {
+    sprintf(nudge, "You should say '%s' who?\r\n", joke.who);
+    if (say(client_d, nudge) == -1) {
       log_error("say", __LINE__);
       return JOKE_ERROR;
     }
     return JOKE_REPROMPT;
   }
-  if (say(client_d, "Oscar silly question, you get a silly answer!\r\n") == -1) {
+  strcat(joke.punchline, "\r\n");
+  if (say(client_d, joke.punchline) == -1) {
     log_error("say", __LINE__);
     return JOKE_ERROR;
   }
@@ -139,10 +164,10 @@ int read_in(int socket, char *buf, int len)
   return strlen(buf);
 }
 
-#define PORT         30001
 int main(void)
 {
   int connect_d = 0, rc = 0;
+  Joke j = {"Oscar", "Oscar silly question, get a silly answer!"};
 
   if (catch_signal(SIGINT, handle_shutdown) == -1)
     exit_error("Setting interrupt handler");
@@ -157,12 +182,12 @@ int main(void)
 
   for (;;) {
     connect_d = open_client_socket();
-    if (say(connect_d, "Internet Knock-Knock Protocal Server\r\nVersion 1.0\r\n") == -1) {
+    if (say(connect_d, "Internet Knock-Knock Protocol Server\r\nVersion 1.0\r\n") == -1) {
       log_error("say", __LINE__);
       close(connect_d);
       continue;
     }
-    while ((rc = tell_joke(connect_d)) == JOKE_REPROMPT)
+    while ((rc = tell_joke(connect_d, j)) == JOKE_REPROMPT)
       ;
     close(connect_d);
   }
