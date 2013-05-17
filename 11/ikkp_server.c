@@ -1,3 +1,6 @@
+#if defined(__linux__) || defined(__linux) || defined(__gnu_linux__)
+  #define _GNU_SOURCE 1
+#endif
 #include <arpa/inet.h>
 #include <ctype.h>
 #include <stdio.h>
