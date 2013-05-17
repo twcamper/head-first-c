@@ -2,31 +2,21 @@
   #define _GNU_SOURCE 1
 #endif
 #include <arpa/inet.h>
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include "error.h"
 #include "signals.h"
+#include "knock-knock-database.h"
 
 /* Macro Definitions */
-#define RESPONSE_MAX  128
-#define PORT          30001
-#define MAX_WHO       RESPONSE_MAX
-#define MAX_PUNCHLINE 512
+#define RESPONSE_MAX  MAX_WHO
 
 /* Global Variables */
 static int listener_d = 0;
 
 /* Type Definitions */
 typedef enum {JOKE_COMPLETE, JOKE_REPROMPT, JOKE_ERROR} JokeStatus;
-typedef struct {
-  char who[MAX_WHO];
-  char punchline[MAX_PUNCHLINE + 2];
-} Joke;
 
 /* Function Prototypes */
 int read_in(int socket, char *buf, int len);
@@ -73,7 +63,7 @@ JokeStatus tell_joke(int client_d, Joke joke)
   strcat(expected_response, " Who?");
   len = read_in(client_d, response, RESPONSE_MAX + 2);
   if (strncasecmp(response, expected_response, len) != 0) {
-    sprintf(nudge, "You should say '%s' who?\r\n", joke.who);
+    sprintf(nudge, "You should say '%s who?'\r\n", joke.who);
     if (say(client_d, nudge) == -1) {
       log_error("say", __LINE__);
       return JOKE_ERROR;
@@ -94,7 +84,7 @@ void handle_shutdown(int sig)
   if (listener_d)
     close(listener_d);
 
-  fprintf(stderr, "\n%d: Bye!\n", sig);
+  fprintf(stderr, "\n%d: That's All Folks!\n", sig);
   exit(EXIT_SUCCESS);
 }
 
@@ -164,21 +154,30 @@ int read_in(int socket, char *buf, int len)
   return strlen(buf);
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
   int connect_d = 0, rc = 0;
-  Joke j = {"Oscar", "Oscar silly question, get a silly answer!"};
+
+  if (argc < 3)
+    invocation_error(argv[0], "port data-file");
+
+  int port = atoi(argv[1]);
+  Joke j;
+  KnockKnockDB db;
+
+  if ((db= load(argv[2])) == NULL)
+    exit_error("Database Who?");
 
   if (catch_signal(SIGINT, handle_shutdown) == -1)
     exit_error("Setting interrupt handler");
 
   listener_d = open_listener_socket();
-  bind_to_port(listener_d, PORT);
+  bind_to_port(listener_d, port);
 
   if (listen(listener_d, 10) == -1)
     exit_error("Can't listen");
 
-  printf("Waiting for connection on port %d\n", PORT);
+  printf("Waiting for connection on port %d\n", port);
 
   for (;;) {
     connect_d = open_client_socket();
@@ -187,10 +186,16 @@ int main(void)
       close(connect_d);
       continue;
     }
-    while ((rc = tell_joke(connect_d, j)) == JOKE_REPROMPT)
-      ;
+    do {
+      if (rc == JOKE_COMPLETE)
+        j = next_joke(db);
+      rc = tell_joke(connect_d, j);
+    } while (rc != JOKE_ERROR && has_got_a_million_of_them(db));
+
     close(connect_d);
   }
+
+  destroy(db);
 
   return 0;
 }
