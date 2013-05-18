@@ -181,18 +181,25 @@ int main(int argc, char *argv[])
 
   for (;;) {
     connect_d = open_client_socket();
-    if (say(connect_d, "Internet Knock-Knock Protocol Server\r\nVersion 1.0\r\n") == -1) {
-      log_error("say", __LINE__);
-      close(connect_d);
-      continue;
-    }
-    do {
-      if (rc == JOKE_COMPLETE)
-        j = next_joke(db);
-      rc = tell_joke(connect_d, j);
-    } while (rc != JOKE_ERROR && has_got_a_million_of_them(db));
 
-    close(connect_d);
+    if (!fork()) { /* child process */
+      close(listener_d);  /* child does not need primary socket */
+
+      if (say(connect_d, "Internet Knock-Knock Protocol Server\r\nVersion 1.0\r\n") == -1) {
+        log_error("say", __LINE__);
+        close(connect_d);
+        continue;
+      }
+      do {
+        if (rc == JOKE_COMPLETE)
+          j = next_joke(db);
+        rc = tell_joke(connect_d, j);
+      } while (rc != JOKE_ERROR && has_got_a_million_of_them(db));
+
+      close(connect_d);
+      exit(EXIT_SUCCESS);
+    }  /* end child */
+    close(connect_d);  /* parent does not need secondary socket */
   }
 
   destroy(db);
